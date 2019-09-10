@@ -1,9 +1,15 @@
 package site.zaraportfolio.repository;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
+import javax.transaction.Transactional;
 
 import org.springframework.stereotype.Repository;
 
@@ -14,9 +20,12 @@ import site.zaraportfolio.domain.KeyWord;
 import site.zaraportfolio.domain.Member;
 import site.zaraportfolio.domain.MemberLikes;
 import site.zaraportfolio.domain.MyInfo;
+import site.zaraportfolio.domain.Project;
+import site.zaraportfolio.domain.ProjectCategory;
 import site.zaraportfolio.domain.Visitor;
 
 @Repository
+@Transactional
 public class MainRepository {
 
 	@PersistenceContext
@@ -24,8 +33,30 @@ public class MainRepository {
 	
 	// 패스워드, 좋아요수
 	public Member getMember() {
-		Member member = em.createQuery("select m from Member m",Member.class).getResultList().get(0);
+		Member member = em.createQuery("select m from Member m",Member.class).getSingleResult();
 		return member;
+	}
+	
+	public boolean saveLike(String strSHA) {
+		MemberLikes ml = em.find(MemberLikes.class, strSHA);
+		Member member = getMember();
+		if(ml == null) {
+			em.persist(new MemberLikes(strSHA,member));
+			return true;
+		}else {
+			member.minusLikes();
+			em.remove(ml);
+			return false;
+		}
+	}
+	
+	public boolean likeState(String strSHA) {
+		MemberLikes ml = em.find(MemberLikes.class, strSHA);
+		if(ml != null) {
+			return true;
+		}else {
+			return false;
+		}
 	}
 	
 	// 방문자 수 카운트
@@ -70,13 +101,18 @@ public class MainRepository {
 	}
 	
 	// 책 삭제
-	public void removeBook(Book book) {
-		em.remove(book);
+	public void removeBook(Long id) {
+		em.remove(em.find(Book.class, id));
+	}
+	
+	// 책 목록 조회
+	public List<Book> findAllBooks() {
+		return em.createQuery("select b from Book b order by b.id desc",Book.class).getResultList();
 	}
 	
 	// 책 조회
-	public List<Book> findAllBooks() {
-		return em.createQuery("select b from Book b",Book.class).getResultList();
+	public Book findOneBook(Long id) {
+		return em.find(Book.class, id);
 	}
 	
 	// 내 소개 업로드
@@ -119,6 +155,7 @@ public class MainRepository {
 	// 교육과정 추가
 	public void saveEducation(Education edu) {
 		if(edu.getId() == null) {
+			edu.setCreatedDate(new Date());
 			em.persist(edu);
 		}else {
 			em.merge(edu);
@@ -126,24 +163,31 @@ public class MainRepository {
 	}
 	
 	// 교육과정 삭제
-	public void removeEducation(Education edu) {
-		em.remove(edu);
+	public void removeEducation(Long id) {
+		em.remove(em.find(Education.class, id));
 	}
 	
 	// 교육과정 수정
 	public void updateEducation(Education edu) {
 		Education t_edu = em.find(Education.class, edu.getId());
 		t_edu.changeDate(edu);
+		t_edu.setLastModifiedDate(new Date());
+	}
+	
+	// 교육과정 리스트 조회
+	public List<Education> findAllEducation(){
+		return em.createQuery("select e from Education e order by e.id asc",Education.class).getResultList();
 	}
 	
 	// 교육과정 조회
-	public List<Education> findAllEducation(){
-		return em.createQuery("select e from Education e",Education.class).getResultList();
+	public Education findOneEducation(Long id) {
+		return em.find(Education.class, id);
 	}
 	
 	// 코딩 경험 저장
 	public void saveExperience(Experience exp) {
 		if(exp.getId() != null) {
+			exp.setCreatedDate(new Date());
 			em.persist(exp);
 		}else {
 			em.merge(exp);
@@ -151,19 +195,73 @@ public class MainRepository {
 	}
 	
 	// 코딩 경험 삭제
-	public void removeExperience(Experience exp) {
-		em.remove(exp);
+	public void removeExperience(Long id) {
+		em.remove(em.find(Experience.class, id));
 	}
 	
 	// 코딩 경험 수정
 	public void updateExperience(Experience exp) {
 		Experience t_exp = em.find(Experience.class, exp.getId());
 		t_exp.changeDate(exp);
+		t_exp.setLastModifiedDate(new Date());
+	}
+	
+	// 코딩 경험리스트 조회
+	public List<Experience> findAllExperience(){
+		return em.createQuery("select e from Experience e",Experience.class).getResultList();
 	}
 	
 	// 코딩 경험 조회
-	public List<Experience> findAllExperience(){
-		return em.createQuery("select e from Experience e",Experience.class).getResultList();
+	public Experience findOneExperience(Long id){
+		return em.find(Experience.class,id);
+	}
+	
+	// 프로젝트 저장
+	public void saveProject(Project project) {
+		project.setCreatedDate(new Date());
+		project.setLastModifiedDate(new Date());
+		em.persist(project);
+	}
+	
+	// 프로젝트 삭제
+	public void removeProject(Long id) {
+		em.remove(em.find(Project.class, id));
+	}
+	
+	// 프로젝트 수정
+	public void updateProject(Project project) {
+		Project p = em.merge(project);
+		p.setLastModifiedDate(new Date());
+	}
+	
+	// 프로젝트 전체 조회
+	public List<Project> findAllProjects() {
+		return em.createQuery("select p from Project p order by p.id desc").getResultList();
+	}
+	
+	// 프로젝트 카테고리별 조회
+	public List<Project> findProjectByCategory(ProjectCategory category){
+		return em.createQuery("select p from Project p where p.category=:category").setParameter("category", category).getResultList();
+	}
+	
+	// 프로젝트 상세보기
+	public Project findOneProject(Long id) {
+		Project p = em.find(Project.class, id);
+		p.getProjectInfo().getId();
+		p.plusHits();
+		return p;
+	}
+	
+	public Map<String,Object> findSiteLog(){
+		Map<String,Object> map = new HashMap<String,Object>();
+		map.put("total", (Object)em.createQuery("select sum(v.count) from Visitor v").getSingleResult());
+		try {			
+			map.put("today", (Object)em.createQuery("select v.count from Visitor v where v.date = :date")
+					.setParameter("date", new SimpleDateFormat("yyyy-MM-dd").format(new Date())).getSingleResult());
+		}catch(NoResultException e) {
+			map.put("today", 0);			
+		}
+		return map;
 	}
 	
 }

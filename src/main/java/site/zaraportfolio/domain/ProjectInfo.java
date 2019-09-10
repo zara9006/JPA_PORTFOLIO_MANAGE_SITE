@@ -24,6 +24,8 @@ public class ProjectInfo {
 	
 	private String environment;
 	
+	private String language;
+	
 	private String library;
 	
 	private String position;

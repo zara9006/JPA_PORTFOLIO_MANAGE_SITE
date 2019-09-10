@@ -46,7 +46,6 @@
   h5,
   h6 {
     color: #000;
-    font-family: "Playfair Display", Georgia, serif;
     font-weight: 400;
     margin: 0 0 30px;
   }
@@ -284,6 +283,11 @@
       margin-left: 300px;
       padding: 40px;
   }
+  
+  .margin_left300_container{
+      margin-left: 300px;
+      padding: 40px;  	
+  }
 
   .panel{
       margin: 0;
@@ -321,4 +325,15 @@
 
   button:hover{
     box-shadow: 1px 1px 2px #b3b3b3;
+  }
+  
+  .span-remove a{
+  	 background-color: white;
+      border: 1px solid #b3b3b3;
+      border-radius: 4px;
+      padding: 0px 10px 0px 10px;
+      text-decoration: none;
+  }
+  .span-remove a:hover{
+  	 box-shadow: 1px 1px 2px #b3b3b3;
   }

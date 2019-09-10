@@ -1,6 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
 <!DOCTYPE HTML>
 <html>
 
@@ -47,6 +48,8 @@
 <link rel="stylesheet" href="/resources/css/owl.theme.default.min.css">
 <!-- Theme style  -->
 <link rel="stylesheet" href="/resources/css/style.css">
+<link rel="stylesheet"
+	href="https://cdnjs.cloudflare.com/ajax/libs/Swiper/4.3.0/css/swiper.min.css">
 
 <!-- Modernizr JS -->
 <script src="/resources/js/modernizr-2.6.2.min.js"></script>
@@ -54,6 +57,30 @@
 <!--[if lt IE 9]>
 	<script src="/resources/js/respond.min.js"></script>
 	<![endif]-->
+<style>
+.swiper-container {
+	width: 100%;
+	height: 320px;
+}
+
+.swiper-slide {
+	text-align: center;
+	font-size: 18px;
+	/* Center slide text vertically */
+	display: -webkit-box;
+	display: -ms-flexbox;
+	display: -webkit-flex;
+	display: flex;
+	-webkit-box-pack: center;
+	-ms-flex-pack: center;
+	-webkit-justify-content: center;
+	justify-content: center;
+	-webkit-box-align: center;
+	-ms-flex-align: center;
+	-webkit-align-items: center;
+	align-items: center;
+}
+</style>
 </head>
 
 <body>
@@ -86,16 +113,22 @@
 							<br>
 						</ul>
 					</div>
-					<ul>
-						<span><strong>Manage Option</strong></span>
-						<li><a href="/project">project</a></li>
-						<li><a href="/develop">education</a></li>
-						<li><a href="/education">develop</a></li>
-					</ul>
+					<c:if test="${loginInfo != null }">						
+						<ul>
+							<span><strong>Manage Option</strong></span>
+							<li><a href="/project">project</a></li>
+							<li><a href="/education">education</a></li>
+							<li><a href="/experience">experience</a></li>
+							<li><a href="/aboutme">aboutme</a></li>
+						</ul>
+					</c:if>
 				</nav>
 
 				<div class="colorlib-footer">
 					<p>
+						<div style="font-size: 20pt; font-weight: bold;">
+							<a id="like_me_btn" onclick="thumbsUp();" style="<c:if test="${like.state == false}">color:black;</c:if>"><i class="icon-heart" style="color:#ec5453;"></i>like me </a>
+						</div>
 						<small>&copy; <!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
 							Copyright <script>
 								document.write(new Date().getFullYear());
@@ -104,9 +137,12 @@
 								target="_blank">zarawebstudy</a></span> <span>Git hub : <a
 								href="https://github.com/zara9006" target="_blank">github.com/zara9006</a></span></small>
 					</p>
-					<small><strong><a onclick="getPasswordInput();">관리자 전환</a></strong></small>
+					<c:if test="${loginInfo == null }">					
+						<small><strong><a onclick="getPasswordInput();">관리자 전환</a></strong></small>
+					</c:if>
 					<form id="loginForm" class="form-group" style="visibility: hidden;" method="POST" action="/login">
-						<input type="password" class="form-control password-input" id="pwd"> <input type="submit" class="btn btn-primary btn-send-message" value="전환">
+						<input type="password" class="form-control password-input" name="password" id="password"> 
+						<input type="submit" class="btn btn-primary btn-send-message" value="전환">
 					</form>
 				</div>
 
@@ -118,7 +154,7 @@
 					<div class="flexslider js-fullheight">
 						<ul class="slides">
 							<li
-								style="background-image: url(/resources/images/img_bg_2.jpg);">
+								style="background-image: url(/resources/images/img_bg_2.PNG);">
 								<div class="overlay"></div>
 								<div class="container-fluid">
 									<div class="row">
@@ -132,7 +168,7 @@
 													<h2>This is my portfolio site.</h2>
 													<p>
 														<a class="btn btn-primary btn-learn"
-															href="https://url-to-pdf-api.herokuapp.com/api/render?url=http://www.zaramovie.site/civ/main">Portfolio
+															href="/pdf">Portfolio
 															download to pdf <i class="icon-briefcase3"></i>
 														</a>
 													</p>
@@ -155,22 +191,25 @@
 						<div class="row">
 							<div class="col-md-3 text-center animate-box">
 								<span class="colorlib-counter js-counter" data-from="0"
-									data-to="3" data-speed="2500" data-refresh-interval="50"></span>
-								<span class="colorlib-counter-label">Projects</span>
+									data-to="${fn:length(pList)}" data-speed="2500"
+									data-refresh-interval="50"></span> <span
+									class="colorlib-counter-label">Projects</span>
 							</div>
 							<div class="col-md-3 text-center animate-box">
 								<span class="colorlib-counter js-counter" data-from="0"
-									data-to="0" data-speed="2500" data-refresh-interval="50"></span>
-								<span class="colorlib-counter-label">Visitors</span>
+									data-to="${log.total}" data-speed="2500"
+									data-refresh-interval="50"></span> <span
+									class="colorlib-counter-label">Visitors</span>
 							</div>
 							<div class="col-md-3 text-center animate-box">
 								<span class="colorlib-counter js-counter" data-from="0"
-									data-to="0" data-speed="2500" data-refresh-interval="50"></span>
-								<span class="colorlib-counter-label">today</span>
+									data-to="${log.today}" data-speed="2500"
+									data-refresh-interval="50"></span> <span
+									class="colorlib-counter-label">today</span>
 							</div>
 							<div class="col-md-3 text-center animate-box">
-								<span class="colorlib-counter js-counter" data-from="0"
-									data-to="0" data-speed="2500" data-refresh-interval="50"></span>
+								<span id="like_me" class="colorlib-counter js-counter" data-from="0"
+									data-to="${like.likes}" data-speed="2500" data-refresh-interval="50"></span>
 								<span class="colorlib-counter-label">Like me</span>
 							</div>
 						</div>
@@ -187,25 +226,25 @@
 										<div class="about-desc">
 											<span class="heading-meta">About Us</span>
 											<h2 class="colorlib-heading">Who Am I?</h2>
-											<div class="row">
+											<!--<div class="row">
 												<div class="col-md-3 animate-box"
 													data-animate-effect="fadeInLeft">
 													<div class="services color-1">
-														<span class="icon2"><i class="icon-bulb"></i></span>
+														<span class="icon2"><i class="icon-sun2"></i></span>
 														<h3>Passion</h3>
 													</div>
 												</div>
 												<div class="col-md-3 animate-box"
 													data-animate-effect="fadeInRight">
 													<div class="services color-2">
-														<span class="icon2"><i class="icon-globe-outline"></i></span>
+														<span class="icon2"><i class="icon-time"></i></span>
 														<h3>Steady</h3>
 													</div>
 												</div>
 												<div class="col-md-3 animate-box"
 													data-animate-effect="fadeInTop">
 													<div class="services color-3">
-														<span class="icon2"><i class="icon-data"></i></span>
+														<span class="icon2"><i class="icon-fire2"></i></span>
 														<h3>Challenge</h3>
 													</div>
 												</div>
@@ -216,19 +255,22 @@
 														<h3>Sociability</h3>
 													</div>
 												</div>
-											</div>
+											</div>-->
 											<p>
-												<strong>Hi I'm Jackson Ford</strong> On her way she met a
-												copy. The copy warned the Little Blind Text, that where it
-												came from it would have been rewritten a thousand times and
-												everything that was left from its origin would be the word
-												"and" and the Little Blind Text should turn around and
-												return to its own, safe country.
+												<strong style="font-size: 13pt;">의미없는 경험은 없다. 일단
+													시작하자!!</strong><br> <br> 개발을 하다 보면 막히거나 생각한 대로 되지 않는 경우가
+												많았습니다. 그때마다 포기하지 않고 천천히 작업하면서 <strong>완벽하지는 않더라도
+													결과물이 나올 수 있게 노력</strong>했습니다. 그런 <strong>경험들이 쌓이다 보면 다음번에
+													다른 새로운 것을 배우거나 시도할 때 좋은 밑거름</strong>이 된다고 생각했기 때문입니다.
 											</p>
-											<p>Even the all-powerful Pointing has no control about
-												the blind texts it is an almost unorthographic life One day
-												however a small line of blind text by the name of Lorem
-												Ipsum decided to leave for the far World of Grammar.</p>
+											<p>
+												평소에 <strong>새로운 것을 배우면 바로바로 활용해서 작더라도 직접 코딩을 통해서
+													완전히 제 것이 될 수 있도록 공부</strong>하려고 노력합니다. 일례로 처음 자바 언어 공부를 시작하고 소켓과
+												스레드를 공부할 때 파일 송수신이 가능한 채팅 프로그램을 만들어 보았습니다. 덕분에 객체지향의 개념에 대해서
+												좀 더 이해할 수 있었고, 이후에 JSP와 Spring 책을 볼 때 많이 수월할 수 있었습니다.
+											</p>
+											<p>이 포트폴리오 관리 사이트 역시 포트폴리오를 준비하면서 JPA를 공부했고 주말을 이용해서 JPA를
+												활용하면 빠르게 만들 수 있겠다는 생각에서 시작하게 되었습니다.</p>
 										</div>
 									</div>
 								</div>
@@ -236,11 +278,26 @@
 									<div class="col-md-12 animate-box"
 										data-animate-effect="fadeInLeft">
 										<div class="hire">
-											<h2>
-												I am happy to know you <br>that 300+ projects done
-												sucessfully!
-											</h2>
-											<a href="#" class="btn-hire">Hire me</a>
+											<h2 style="margin-bottom: 10px;">최근 읽은 책</h2>
+											<div class="swiper-container">
+												<div class="swiper-wrapper">
+													<c:forEach var="b" items="${bList}">
+														<div class="swiper-slide">
+															<span style="position: absolute; display: none;"><button
+																	onclick="location.href='/book/delete/${b.id}'">삭제</button></span>
+															<div
+																style="border: 1px solid #f2f3f7; background-color: white; padding: 10px; width: 170px; height: 260px; margin-bottom: 20px;">
+																<img src="${b.image}" style="width: 140px; height: 80%;">
+																<div style="height: 20%;">
+																	<span style="font-size:0.5vw;">${b.title}</span>
+																</div>
+															</div>
+														</div>
+													</c:forEach>
+												</div>
+												<!-- Add Pagination -->
+												<div class="swiper-pagination"></div>
+											</div>
 										</div>
 									</div>
 								</div>
@@ -342,11 +399,13 @@
 						<div class="row">
 							<div class="col-md-12 animate-box"
 								data-animate-effect="fadeInLeft">
-								<p>The Big Oxmox advised her not to do so, because there
-									were thousands of bad Commas, wild Question Marks and devious
-									Semikoli, but the Little Blind Text didn’t listen. She packed
-									her seven versalia, put her initial into the belt and made
-									herself on the way.</p>
+								<p>
+									주로 자바를 사용해서 Spring 프레임워크와 Mybatis를 연동하여 웹 개발을 하고 있습니다.<br>
+									메이븐을 활용하여 라이브러리 관리와 프로젝트 빌드를 해보았습니다. Mybatis를 활용한 기본적인 CRUD작업과
+									저장 프로시저 활용에 능숙합니다. 데이터는 주로 VO와 DTO를 활용한 방법과 자바 map을 활용한 방법 두가지를
+									응용하여 처리하고 있습니다. 최근 모바일 앱 공부를 시작하면서 Restfull 방식의 개발을 이해하고 사용하려고
+									노력하고 있습니다.
+								</p>
 							</div>
 							<div class="col-md-6 animate-box"
 								data-animate-effect="fadeInLeft">
@@ -354,6 +413,45 @@
 									<h3>Java</h3>
 									<div class="progress">
 										<div class="progress-bar color-1" role="progressbar"
+											aria-valuenow="80" aria-valuemin="0" aria-valuemax="100"
+											style="width: 80%">
+											<span>80%</span>
+										</div>
+									</div>
+								</div>
+							</div>
+							<div class="col-md-6 animate-box"
+								data-animate-effect="fadeInRight">
+								<div class="progress-wrap">
+									<h3>Spring</h3>
+									<div class="progress">
+										<div class="progress-bar color-2" role="progressbar"
+											aria-valuenow="80" aria-valuemin="0" aria-valuemax="100"
+											style="width: 80%">
+											<span>80%</span>
+										</div>
+									</div>
+								</div>
+							</div>
+							<div class="col-md-6 animate-box"
+								data-animate-effect="fadeInLeft">
+								<div class="progress-wrap">
+									<h3>jQuery</h3>
+									<div class="progress">
+										<div class="progress-bar color-3" role="progressbar"
+											aria-valuenow="70" aria-valuemin="0" aria-valuemax="100"
+											style="width: 70%">
+											<span>70%</span>
+										</div>
+									</div>
+								</div>
+							</div>
+							<div class="col-md-6 animate-box"
+								data-animate-effect="fadeInRight">
+								<div class="progress-wrap">
+									<h3>Mybatis</h3>
+									<div class="progress">
+										<div class="progress-bar color-4" role="progressbar"
 											aria-valuenow="75" aria-valuemin="0" aria-valuemax="100"
 											style="width: 75%">
 											<span>75%</span>
@@ -364,7 +462,33 @@
 							<div class="col-md-6 animate-box"
 								data-animate-effect="fadeInRight">
 								<div class="progress-wrap">
-									<h3>Spring</h3>
+									<h3>HTML5+CSS3</h3>
+									<div class="progress">
+										<div class="progress-bar color-6" role="progressbar"
+											aria-valuenow="60" aria-valuemin="0" aria-valuemax="100"
+											style="width: 60%">
+											<span>60%</span>
+										</div>
+									</div>
+								</div>
+							</div>
+							<div class="col-md-6 animate-box"
+								data-animate-effect="fadeInLeft">
+								<div class="progress-wrap">
+									<h3>Node.js</h3>
+									<div class="progress">
+										<div class="progress-bar color-1" role="progressbar"
+											aria-valuenow="65" aria-valuemin="0" aria-valuemax="100"
+											style="width: 65%">
+											<span>65%</span>
+										</div>
+									</div>
+								</div>
+							</div>
+							<div class="col-md-6 animate-box"
+								data-animate-effect="fadeInRight">
+								<div class="progress-wrap">
+									<h3>Python</h3>
 									<div class="progress">
 										<div class="progress-bar color-2" role="progressbar"
 											aria-valuenow="60" aria-valuemin="0" aria-valuemax="100"
@@ -377,77 +501,12 @@
 							<div class="col-md-6 animate-box"
 								data-animate-effect="fadeInLeft">
 								<div class="progress-wrap">
-									<h3>jQuery</h3>
-									<div class="progress">
-										<div class="progress-bar color-3" role="progressbar"
-											aria-valuenow="85" aria-valuemin="0" aria-valuemax="100"
-											style="width: 85%">
-											<span>85%</span>
-										</div>
-									</div>
-								</div>
-							</div>
-							<div class="col-md-6 animate-box"
-								data-animate-effect="fadeInRight">
-								<div class="progress-wrap">
-									<h3>Node.js</h3>
-									<div class="progress">
-										<div class="progress-bar color-4" role="progressbar"
-											aria-valuenow="90" aria-valuemin="0" aria-valuemax="100"
-											style="width: 90%">
-											<span>90%</span>
-										</div>
-									</div>
-								</div>
-							</div>
-							<div class="col-md-6 animate-box"
-								data-animate-effect="fadeInLeft">
-								<div class="progress-wrap">
-									<h3>HTML5</h3>
+									<h3>Hibernate</h3>
 									<div class="progress">
 										<div class="progress-bar color-5" role="progressbar"
-											aria-valuenow="70" aria-valuemin="0" aria-valuemax="100"
-											style="width: 70%">
-											<span>70%</span>
-										</div>
-									</div>
-								</div>
-							</div>
-							<div class="col-md-6 animate-box"
-								data-animate-effect="fadeInRight">
-								<div class="progress-wrap">
-									<h3>CSS3</h3>
-									<div class="progress">
-										<div class="progress-bar color-6" role="progressbar"
-											aria-valuenow="80" aria-valuemin="0" aria-valuemax="100"
-											style="width: 80%">
-											<span>80%</span>
-										</div>
-									</div>
-								</div>
-							</div>
-							<div class="col-md-6 animate-box"
-								data-animate-effect="fadeInLeft">
-								<div class="progress-wrap">
-									<h3>HTML5</h3>
-									<div class="progress">
-										<div class="progress-bar color-5" role="progressbar"
-											aria-valuenow="70" aria-valuemin="0" aria-valuemax="100"
-											style="width: 70%">
-											<span>70%</span>
-										</div>
-									</div>
-								</div>
-							</div>
-							<div class="col-md-6 animate-box"
-								data-animate-effect="fadeInRight">
-								<div class="progress-wrap">
-									<h3>CSS3</h3>
-									<div class="progress">
-										<div class="progress-bar color-6" role="progressbar"
-											aria-valuenow="80" aria-valuemin="0" aria-valuemax="100"
-											style="width: 80%">
-											<span>80%</span>
+											aria-valuenow="30" aria-valuemin="0" aria-valuemax="100"
+											style="width: 30%">
+											<span>30%</span>
 										</div>
 									</div>
 								</div>
@@ -468,62 +527,24 @@
 						<div class="row">
 							<div class="col-md-12">
 								<div class="timeline-centered">
-									<article class="timeline-entry animate-box"
-										data-animate-effect="fadeInLeft">
-										<div class="timeline-entry-inner">
+									<c:forEach var="ed" items="${edList}" varStatus="status">
+										<article class="timeline-entry animate-box"
+											data-animate-effect="fadeInLeft">
+											<div class="timeline-entry-inner">
 
-											<div class="timeline-icon color-1">
-												<i class="icon-pen2"></i>
-											</div>
+												<div class="timeline-icon color-${(status.index % 6)+1}">
+													<i class="icon-pen2"></i>
+												</div>
 
-											<div class="timeline-label">
-												<h2>
-													<a href="#">한국 IT 직업전문학교</a> <span>2015-2016</span>
-												</h2>
-												<p>Tolerably earnestly middleton extremely distrusts she
-													boy now not. Add and offered prepare how cordial two
-													promise. Greatly who affixed suppose but enquire compact
-													prepare all put. Added forth chief trees but rooms think
-													may.</p>
+												<div class="timeline-label">
+													<h2>
+														<a href="#">${ed.schoolName}</a> <span>${ed.period}</span>
+													</h2>
+													<p>${ed.content}</p>
+												</div>
 											</div>
-										</div>
-									</article>
-
-									<article class="timeline-entry animate-box"
-										data-animate-effect="fadeInTop">
-										<div class="timeline-entry-inner">
-											<div class="timeline-icon color-4">
-												<i class="icon-pen2"></i>
-											</div>
-											<div class="timeline-label">
-												<h2>
-													<a href="#">동아리 활동</a> <span>2017-2018</span>
-												</h2>
-												<p>Even the all-powerful Pointing has no control about
-													the blind texts it is an almost unorthographic life One day
-													however a small line of blind text by the name of Lorem
-													Ipsum decided to leave for the far World of Grammar.</p>
-											</div>
-										</div>
-									</article>
-
-									<article class="timeline-entry animate-box"
-										data-animate-effect="fadeInRight">
-										<div class="timeline-entry-inner">
-											<div class="timeline-icon color-2">
-												<i class="icon-pen2"></i>
-											</div>
-											<div class="timeline-label">
-												<h2>
-													<a href="#">인크레파스</a> <span>2019</span>
-												</h2>
-												<p>Even the all-powerful Pointing has no control about
-													the blind texts it is an almost unorthographic life One day
-													however a small line of blind text by the name of Lorem
-													Ipsum decided to leave for the far World of Grammar.</p>
-											</div>
-										</div>
-									</article>
+										</article>
+									</c:forEach>
 
 									<article class="timeline-entry begin animate-box"
 										data-animate-effect="fadeInBottom">
@@ -552,126 +573,30 @@
 								<div class="fancy-collapse-panel">
 									<div class="panel-group" id="accordion" role="tablist"
 										aria-multiselectable="true">
-										<div class="panel panel-default">
-											<div class="panel-heading" role="tab" id="headingOne">
-												<h4 class="panel-title">
-													<a data-toggle="collapse" data-parent="#accordion"
-														href="#collapseOne" aria-expanded="true"
-														aria-controls="collapseOne">Master Degree Graphic
-														Design </a>
-												</h4>
-											</div>
-											<div id="collapseOne" class="panel-collapse collapse in"
-												role="tabpanel" aria-labelledby="headingOne">
-												<div class="panel-body">
-													<div class="row">
-														<div class="col-md-6">
-															<p>Far far away, behind the word mountains, far from
-																the countries Vokalia and Consonantia, there live the
-																blind texts.</p>
-														</div>
-														<div class="col-md-6">
-															<p>Separated they live in Bookmarksgrove right at the
-																coast of the Semantics, a large language ocean.</p>
+										<c:forEach var="e" items="${eList}">
+											<div class="panel panel-default">
+												<div class="panel-heading" role="tab" id="heading${e.id}">
+													<h4 class="panel-title">
+														<a class="collapsed" data-toggle="collapse"
+															data-parent="#accordion" href="#collapse${e.id}"
+															aria-expanded="false" aria-controls="collapse${e.id}">${e.title}</a>
+													</h4>
+												</div>
+												<div id="collapse${e.id}" class="panel-collapse collapse"
+													role="tabpanel" aria-labelledby="heading${e.id}">
+													<div class="panel-body">
+														<div class="row">
+															<div class="col-md-6">
+																<p>${e.problem}</p>
+															</div>
+															<div class="col-md-6">
+																<p>${e.solution}</p>
+															</div>
 														</div>
 													</div>
 												</div>
 											</div>
-										</div>
-										<div class="panel panel-default">
-											<div class="panel-heading" role="tab" id="headingTwo">
-												<h4 class="panel-title">
-													<a class="collapsed" data-toggle="collapse"
-														data-parent="#accordion" href="#collapseTwo"
-														aria-expanded="false" aria-controls="collapseTwo">Bachelor
-														Degree of Computer Science </a>
-												</h4>
-											</div>
-											<div id="collapseTwo" class="panel-collapse collapse"
-												role="tabpanel" aria-labelledby="headingTwo">
-												<div class="panel-body">
-													<p>
-														Far far away, behind the word <strong>mountains</strong>,
-														far from the countries Vokalia and Consonantia, there live
-														the blind texts. Separated they live in Bookmarksgrove
-														right at the coast of the Semantics, a large language
-														ocean.
-													</p>
-													<ul>
-														<li>Separated they live in Bookmarksgrove right</li>
-														<li>Separated they live in Bookmarksgrove right</li>
-													</ul>
-												</div>
-											</div>
-										</div>
-										<div class="panel panel-default">
-											<div class="panel-heading" role="tab" id="headingThree">
-												<h4 class="panel-title">
-													<a class="collapsed" data-toggle="collapse"
-														data-parent="#accordion" href="#collapseThree"
-														aria-expanded="false" aria-controls="collapseThree">Diploma
-														in Information Technology </a>
-												</h4>
-											</div>
-											<div id="collapseThree" class="panel-collapse collapse"
-												role="tabpanel" aria-labelledby="headingThree">
-												<div class="panel-body">
-													<p>
-														Far far away, behind the word <strong>mountains</strong>,
-														far from the countries Vokalia and Consonantia, there live
-														the blind texts. Separated they live in Bookmarksgrove
-														right at the coast of the Semantics, a large language
-														ocean.
-													</p>
-												</div>
-											</div>
-										</div>
-
-										<div class="panel panel-default">
-											<div class="panel-heading" role="tab" id="headingFour">
-												<h4 class="panel-title">
-													<a class="collapsed" data-toggle="collapse"
-														data-parent="#accordion" href="#collapseFour"
-														aria-expanded="false" aria-controls="collapseFour">Diploma
-														in Information Technology </a>
-												</h4>
-											</div>
-											<div id="collapseFour" class="panel-collapse collapse"
-												role="tabpanel" aria-labelledby="headingFour">
-												<div class="panel-body">
-													<p>
-														Far far away, behind the word <strong>mountains</strong>,
-														far from the countries Vokalia and Consonantia, there live
-														the blind texts. Separated they live in Bookmarksgrove
-														right at the coast of the Semantics, a large language
-														ocean.
-													</p>
-												</div>
-											</div>
-										</div>
-
-										<div class="panel panel-default">
-											<div class="panel-heading" role="tab" id="headingFive">
-												<h4 class="panel-title">
-													<a class="collapsed" data-toggle="collapse"
-														data-parent="#accordion" href="#collapseFive"
-														aria-expanded="false" aria-controls="collapseFive">High
-														School Secondary Education </a>
-												</h4>
-											</div>
-											<div id="collapseFive" class="panel-collapse collapse"
-												role="tabpanel" aria-labelledby="headingFive">
-												<div class="panel-body">
-													<p>
-														Far far away, behind the word <strong>mountains</strong>,
-														far from the countries Vokalia and Consonantia, there live
-														the blind texts. Separated they live in Bookmarksgrove
-														right at the coast of the Semantics, a large language
-														ocean.
-													</p>
-												</div>
-											</div>
-										</div>
+										</c:forEach>
 									</div>
 								</div>
 							</div>
@@ -691,45 +616,48 @@
 						</div>
 						<div class="row row-bottom-padded-sm animate-box"
 							data-animate-effect="fadeInLeft">
+							<!-- 
 							<div class="col-md-12">
 								<p class="work-menu">
-									<span><a href="#" class="active">All</a></span> <span><a
-										href="#">Spring</a></span> <span><a href="#">Node.js</a></span>
+									<span><a class="active p_category">ALL</a></span> <span><a
+										class="p_category">WEB</a></span> <span><a class="p_category">CRAWLING</a></span><span><a
+										class="p_category">MOBILE</a></span>
 								</p>
 							</div>
+							 -->
 						</div>
-						<div class="row">
-							<c:forEach var="p" items="${projects}">							
-								<div class="col-md-6 animate-box" data-animate-effect="fadeInLeft">
+						<div class="row" id="project_box">
+							<c:forEach var="p" items="${pList}" varStatus="status">
+								<div class="col-md-6 animate-box"
+									data-animate-effect="fadeInLeft">
 									<div class="project"
-										style="background-image: url('/resources/upload/${p.mainImage}');">
+										style="background-image: url('/resources/upload/${p.image}');">
 										<div class="desc">
-											<div class="con">
-												<h3>
-													<a href="work.html">Work 01</a>
-												</h3>
-												<span><strong>${p.title}</strong><br>${p.simpleContent}</span>
-	
-												<p class="icon">
-													<span><a href="#"><i class="icon-share3"></i></a></span> <span><a
-														href="#"><i class="icon-eye"></i>${p.hits }</a></span> <span><a
-														href="#"><i class="icon-heart"></i> ${p.likes }</a></span>
-												</p>
-											</div>
+											<a href="/project/${p.id}">
+												<div class="con">
+													<h3>Work 0${status.index+1}</h3>
+													<span><strong>${p.title}</strong><br>${p.goal}</span>
+
+													<p class="icon">
+														<span style="font-size: 14pt;"><i class="icon-eye"></i> ${p.hits }</span> 
+														<!--<span><i class="icon-heart"></i> ${p.likes }</span>-->
+													</p>
+												</div>
+											</a>
 										</div>
 									</div>
 								</div>
 							</c:forEach>
-						<div class="row">
-							<div class="col-md-12 animate-box">
-								<p>
-									<a href="#" class="btn btn-primary btn-lg btn-load-more">Load
-										more <i class="icon-reload"></i>
-									</a>
-								</p>
-							</div>
+							<!--<div class="row">
+								<div class="col-md-12 animate-box">
+									<p>
+										<a href="#" class="btn btn-primary btn-lg btn-load-more">Load
+											more <i class="icon-reload"></i>
+										</a>
+									</p>
+								</div>
+							</div>-->
 						</div>
-					</div>
 				</section>
 
 				<section class="colorlib-contact" data-section="contact">
@@ -747,27 +675,23 @@
 									<div
 										class="col-md-10 col-md-offset-1 col-md-pull-1 animate-box"
 										data-animate-effect="fadeInRight">
-										<form action="">
+										<form action="/mail/send" method="post">
 											<div class="form-group">
-												<input type="text" class="form-control mail-text"
-													placeholder="Name">
+												<input name="email" type="text" class="form-control mail-text"
+													placeholder="Your Email">
 											</div>
 											<div class="form-group">
-												<input type="text" class="form-control mail-text"
-													placeholder="Email">
+												<input name="title" type="text" class="form-control mail-text"
+													placeholder="Title">
 											</div>
 											<div class="form-group">
-												<input type="text" class="form-control mail-text"
-													placeholder="Subject">
-											</div>
-											<div class="form-group">
-												<textarea name="" id="message" cols="30" rows="7"
+												<textarea name="content" id="message" cols="30" rows="7"
 													class="form-control mail-text" placeholder="Message"></textarea>
 											</div>
 											<div class="form-group">
 												<input type="submit"
 													class="btn btn-primary btn-send-message"
-													value="Send Message">
+													value="Send Mail">
 											</div>
 										</form>
 									</div>
@@ -799,16 +723,68 @@
 	<script src="/resources/js/owl.carousel.min.js"></script>
 	<!-- Counters -->
 	<script src="/resources/js/jquery.countTo.js"></script>
+	<!-- Swiper -->
+	<script
+		src="https://cdnjs.cloudflare.com/ajax/libs/Swiper/4.3.0/js/swiper.min.js"></script>
 
 	<!-- MAIN JS -->
 	<script src="/resources/js/main.js"></script>
-	
+
 	<script type="text/javascript">
-		function getPasswordInput(){
-			$('#loginForm').css('visibility','visible');
+		function getPasswordInput() {
+			$('#loginForm').css('visibility', 'visible');
+		}
+		var swiper = new Swiper('.swiper-container', {
+			slidesPerView : 4,
+			spaceBetween : 20,
+			centeredSlides : true,
+			pagination : {
+				el : '.swiper-pagination',
+				clickable : true,
+			},
+			breakpoints: { 
+				300: { slidesPerView: 2, spaceBetween: 60 },
+				1200: { slidesPerView: 3, spaceBetween: 40 }
+			}
+		});
+
+		$('.p_category').click(function() {
+			var category = $(this).html();
+			$.ajax({
+				type : "get",
+				data : {
+					"category" : category
+				},
+				url : "/project/search",
+				success : function(data) {
+					var h = $(data);
+					$('#project_box').html('');
+					$('#project_box').append(h);
+				}
+			});
+
+		});
+		
+		function thumbsUp(){
+			$.ajax({
+				type:"get",
+				url:"/thumbsup",
+				success:function(data){
+					$('#like_me').html(data.likes);
+					if(data){
+						if(data.state){							
+							$('#like_me_btn').css('color','#2c98f0');
+						}else{
+							$('#like_me_btn').css('color','black');
+						}
+					}else{						
+						alert('Error!');
+					}
+				}
+			});
 		}
 	</script>
-	
+
 </body>
 
 </html>

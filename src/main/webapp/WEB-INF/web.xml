@@ -6,12 +6,20 @@
 	<listener>
 		<listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
 	</listener>
+	
+	<listener>
+		<listener-class>site.zaraportfolio.util.MySessionListener</listener-class>
+	</listener>
 
 	<context-param>
 		<param-name>contextConfigLocation</param-name>
 		<param-value>classpath:root-context.xml</param-value>
 	</context-param>
 	
+	<context-param>
+		<param-name>uploadPath</param-name>
+		<param-value>/resources/upload/</param-value>
+	</context-param>
 
 	<servlet>
 		<servlet-name>appServlet</servlet-name>

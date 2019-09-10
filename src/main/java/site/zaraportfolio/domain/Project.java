@@ -3,10 +3,12 @@ package site.zaraportfolio.domain;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
@@ -17,7 +19,7 @@ import lombok.Setter;
 
 @Entity
 @Getter @Setter
-public class Project {
+public class Project extends BaseEntity{
 	
 	@Id @GeneratedValue
 	@Column(name = "PROJECT_ID")
@@ -32,20 +34,23 @@ public class Project {
 	
 	private String goal;
 	
-	private String likes;
+	private int likes;
 	
-	private String hits;
+	private int hits;
 	
 	private int saved;
 	
-	@OneToOne
+	@OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	@JoinColumn(name = "project")
 	private ProjectInfo projectInfo;
-	
 	
 	public void setProjectInfo(ProjectInfo projectInfo) {
 		this.projectInfo = projectInfo;
 		projectInfo.setProject(this);
+	}
+	
+	public void plusHits() {
+		this.hits+=1;
 	}
 	
 }

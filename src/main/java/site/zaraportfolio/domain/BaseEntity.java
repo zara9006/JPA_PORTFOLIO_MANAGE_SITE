@@ -13,10 +13,10 @@ import lombok.Setter;
 @Getter @Setter
 public class BaseEntity {
 	
-	@Temporal(TemporalType.TIMESTAMP)
+	@Temporal(TemporalType.DATE)
 	private Date createdDate;
 	
-	@Temporal(TemporalType.TIMESTAMP)
+	@Temporal(TemporalType.DATE)
 	private Date lastModifiedDate;
 	
 }

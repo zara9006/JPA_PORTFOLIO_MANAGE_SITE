@@ -21,4 +21,14 @@ public class MemberLikes {
 	@Column(name = "ip")
 	private String md5IP;
 	
+	public MemberLikes() {
+		
+	}
+	
+	public MemberLikes(String ip,Member member) {
+		this.md5IP = ip;
+		this.member = member;
+		member.plusLikes();
+	}
+	
 }

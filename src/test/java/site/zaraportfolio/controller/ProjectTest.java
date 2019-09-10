@@ -4,6 +4,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 
 import org.junit.Ignore;
@@ -19,7 +20,9 @@ import site.zaraportfolio.domain.KeyWord;
 import site.zaraportfolio.domain.Member;
 import site.zaraportfolio.domain.MemberLikes;
 import site.zaraportfolio.domain.MyInfo;
-import site.zaraportfolio.domain.Visitor;
+import site.zaraportfolio.domain.Project;
+import site.zaraportfolio.domain.ProjectCategory;
+import site.zaraportfolio.domain.ProjectInfo;
 import site.zaraportfolio.repository.MainRepository;
 import site.zaraportfolio.service.MainService;
 
@@ -79,7 +82,7 @@ public class ProjectTest {
 		}
 		
 		// When2 ( 책 remove )
-		repository.removeBook(book2);
+		repository.removeBook(book2.getId());
 		
 		// Then2
 		for (Book b : repository.findAllBooks()) {
@@ -114,12 +117,54 @@ public class ProjectTest {
 	}
 	
 	@Test
+	@Ignore
 	public void visitorLogTest() {
 		repository.uploadLog(new SimpleDateFormat("yyyy-MM-dd").format(new Date()));
 		repository.uploadLog(new SimpleDateFormat("yyyy-MM-dd").format(new Date()));
 		Date d = new Date();
 		d.setDate(6);
 		repository.uploadLog(new SimpleDateFormat("yyyy-MM-dd").format(d));
+	}
+	
+	@Test
+	@Ignore
+	public void projectTest() {
+		// Given
+		Project p = new Project();
+		p.setCategory(ProjectCategory.WEB);
+		p.setGoal("하이버네이트 기초 공부");
+		p.setHits(0);
+		p.setImage("hibernate.png");
+		p.setLikes(0);
+		p.setSaved(0);
+		p.setTitle("포트폴리오 관리 사이트");
+		
+		ProjectInfo pi = new ProjectInfo();
+		pi.setContent("프로젝트 설명!");
+		pi.setEnvironment("Spring+Hibernate");
+		pi.setLibrary("lombok, hibernate, ...");
+		pi.setPeriod("2019-09-06~");
+		pi.setPosition("전부");
+		p.setProjectInfo(pi);
+		
+		// When ( 프로젝트 등록 )
+		service. saveProject(p);
+		
+		// Then ( 조회 )
+		System.out.println(repository.findOneProject(p.getId()).getProjectInfo().getContent());
+		System.out.println(repository.findProjectByCategory(ProjectCategory.WEB).get(0).getGoal());
+		System.out.println(repository.findAllProjects().size());
+	
+		// When2 ( 삭제 )
+		repository.removeProject(p.getId());
+		
+		// Then2 ( 확인 )
+		System.out.println(repository.findAllProjects().size());
+	}
+	
+	@Test
+	public void siteLogTest() {
+		System.out.println(service.loginCheck("zara9006!@"));
 	}
 
 }
